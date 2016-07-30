@@ -1,7 +1,7 @@
 # Copyright (c) 2016, Samantha Marshall (http://pewpewthespells.com)
 # All rights reserved.
 #
-# https://github.com/samdmarshall/pypresenter
+# https://github.com/samdmarshall/pylocalizer
 #
 # Redistribution and use in source and binary forms, with or without modification,
 # are permitted provided that the following conditions are met:
@@ -28,7 +28,24 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from .main        import main # pylint: disable=unused-import
-from .slide		  import slide
-from .version     import __version__ as PYPRESENTER_VERSION
-__version__ = PYPRESENTER_VERSION
+# Original code taken from http://code.activestate.com/recipes/410692/
+
+class Switch(object):
+    def __init__(self, value):
+        self.value = value
+        self.fall = False
+
+    def __iter__(self):
+        """Return the match method once, then stop"""
+        yield self.match
+        raise StopIteration # pragma: no cover
+
+    def match(self, *args):
+        """Indicate whether or not to enter a case suite"""
+        result = False
+        if self.fall or not args:
+            result = True
+        elif self.value in args: # changed for v1.5, see below
+            self.fall = True
+            result = True
+        return result

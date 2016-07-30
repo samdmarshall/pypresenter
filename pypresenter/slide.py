@@ -28,7 +28,9 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from .main        import main # pylint: disable=unused-import
-from .slide		  import slide
-from .version     import __version__ as PYPRESENTER_VERSION
-__version__ = PYPRESENTER_VERSION
+class slide(object):
+
+    def draw(self, window):
+        raise Exception("Subclass this type to implement a slide")
+    def content(self):
+        raise Exception("Subclass this type to implement a slide")

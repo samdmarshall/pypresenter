@@ -28,10 +28,11 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__			import print_function
+from __future__			 import print_function
 import sys
 import argparse
-from .version         	import __version__ as PYPRESENTER_VERSION
+from .version            import __version__ as PYPRESENTER_VERSION
+from .                   import console
 
 # Main
 def main(argv=sys.argv[1:]):
@@ -48,8 +49,7 @@ def main(argv=sys.argv[1:]):
         help='Path to the slide-deck to display',
     )
     args = parser.parse_args(argv)
-
-    print(args)
+    console.console(args.slides)
 
 if __name__ == "__main__": # pragma: no cover
     main()

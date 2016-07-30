@@ -6,8 +6,14 @@
 /Users/Samantha/Library/Python/2.7/lib/python/site-packages/pypresenter-0.1-py2.7.egg/EGG-INFO/top_level.txt
 /Users/Samantha/Library/Python/2.7/lib/python/site-packages/pypresenter-0.1-py2.7.egg/pypresenter/__init__.py
 /Users/Samantha/Library/Python/2.7/lib/python/site-packages/pypresenter-0.1-py2.7.egg/pypresenter/__init__.pyc
+/Users/Samantha/Library/Python/2.7/lib/python/site-packages/pypresenter-0.1-py2.7.egg/pypresenter/console.py
+/Users/Samantha/Library/Python/2.7/lib/python/site-packages/pypresenter-0.1-py2.7.egg/pypresenter/console.pyc
 /Users/Samantha/Library/Python/2.7/lib/python/site-packages/pypresenter-0.1-py2.7.egg/pypresenter/main.py
 /Users/Samantha/Library/Python/2.7/lib/python/site-packages/pypresenter-0.1-py2.7.egg/pypresenter/main.pyc
+/Users/Samantha/Library/Python/2.7/lib/python/site-packages/pypresenter-0.1-py2.7.egg/pypresenter/slide.py
+/Users/Samantha/Library/Python/2.7/lib/python/site-packages/pypresenter-0.1-py2.7.egg/pypresenter/slide.pyc
+/Users/Samantha/Library/Python/2.7/lib/python/site-packages/pypresenter-0.1-py2.7.egg/pypresenter/Switch.py
+/Users/Samantha/Library/Python/2.7/lib/python/site-packages/pypresenter-0.1-py2.7.egg/pypresenter/Switch.pyc
 /Users/Samantha/Library/Python/2.7/lib/python/site-packages/pypresenter-0.1-py2.7.egg/pypresenter/version.py
 /Users/Samantha/Library/Python/2.7/lib/python/site-packages/pypresenter-0.1-py2.7.egg/pypresenter/version.pyc
 /Users/Samantha/Library/Python/2.7/lib/python/site-packages/pypresenter-0.1-py2.7.egg/pypresenter/version_info.py
