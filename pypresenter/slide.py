@@ -82,6 +82,8 @@ def DisplayText(window, line, newline_count, line_index, func_x, func_y):
     y = func_y(rows, newline_count, line_index)
     with window.location(x=x,y=y):
         print(line)
+        print('\n'*(len(line)/cols))
+    return int(len(line)/cols) + 1
 
 def LeftText(window, text, scroll_offset):
     rows = window.height
@@ -90,9 +92,10 @@ def LeftText(window, text, scroll_offset):
     newlines = len(text_lines)
     line_index = 0
     for line in text_lines[scroll_offset:]:
+        run_over = 1
         if line_index < rows -1:
-            DisplayText(window, line, newlines, line_index, left_x, left_y)
-        line_index += 1
+            run_over = DisplayText(window, line, newlines, line_index, left_x, left_y)
+        line_index += run_over
 
 def CenterText(window, text, scroll_offset):
     rows = window.height
@@ -101,9 +104,10 @@ def CenterText(window, text, scroll_offset):
     newlines = len(text_lines)
     line_index = 0
     for line in text_lines[scroll_offset:]:
+        run_over = 1
         if line_index < newlines:
-            DisplayText(window, line, newlines, line_index, center_x, center_y)
-        line_index += 1
+            run_over = DisplayText(window, line, newlines, line_index, center_x, center_y)
+        line_index += run_over
 
 kDrawingMethods = {
     'center': CenterText,
@@ -141,7 +145,7 @@ class slide(object):
     def scrollUp(self, window):
         text = self.content(window)
         lines = len(text.split('\n'))
-        if lines > window.height:
+        if lines > window.height - 1:
             if self.scroll_position > 0:
                 self.scroll_position = self.scroll_position - 1
                 self.displayText(window, text)
@@ -151,7 +155,7 @@ class slide(object):
     def scrollDown(self, window):
         text = self.content(window)
         lines = len(text.split('\n'))
-        if lines - self.scroll_position > window.height:
+        if lines - self.scroll_position > window.height - 1:
             if self.scroll_position + 1 < lines:
                 self.scroll_position = self.scroll_position + 1
                 self.displayText(window, text)
