@@ -33,6 +33,7 @@ import os
 import imp
 import sys
 import tty
+import glob
 import curses
 import termios
 import blessings
@@ -72,6 +73,7 @@ class console(object):
         self.term.stream.write(self.term.hide_cursor)
 
     def load(self):
+        working_dir = os.getcwd()
         os.chdir(self.slides_directory)
         slide_files = list()
         for fileref in os.listdir(self.slides_directory):
@@ -82,6 +84,7 @@ class console(object):
             slide_path = os.path.join(self.slides_directory, slide)
             name, _ = os.path.splitext(slide)
             self.slides[name] = imp.load_source(name, slide_path)
+        os.chdir(working_dir)
 
     def flash(self):
         print('\a')
@@ -164,3 +167,5 @@ class console(object):
         print(self.term.clear())
         self.term.stream.write(self.term.normal_cursor)
         self.term.exit_fullscreen()
+        cruft = os.path.join(self.slides_directory, '*.pyc')
+        [os.remove(pyc_file) for pyc_file in glob.glob(cruft)]
