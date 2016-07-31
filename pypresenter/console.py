@@ -30,22 +30,32 @@
 
 from __future__ import print_function
 import os
-import sys
-import curses
 import imp
+import sys
+import tty
+import curses
+import termios
+import blessings
 from .Switch    import Switch
+from .          import slide
 
-def linesInText(columns, text):
-    number_of_newlines = text.count('\n')
-    number_of_wrapped_lines = (len(text) / columns) + 1
-    return number_of_newlines + number_of_wrapped_lines
+class _Getch:
+    def __call__(self):
+            fd = sys.stdin.fileno()
+            old_settings = termios.tcgetattr(fd)
+            try:
+                tty.setraw(sys.stdin.fileno())
+                ch = sys.stdin.read(3)
+            finally:
+                termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+            return ch
 
 class console(object):
 
     def __init__(self, slides_path):
         self.slides_directory = slides_path
-        self.window = None
-        self.text_pad = None
+        self.term = None
+        self.input = _Getch()
         self.slides = dict()
         self.slide_index = 1
         self.scroll_position = 1
@@ -57,11 +67,9 @@ class console(object):
             print('Unable to find a slide deck at "%s" :(' % self.slides_directory)
 
     def setup(self):
-        self.window = curses.initscr()
-        curses.noecho()
-        curses.cbreak()
-        self.window.keypad(1)
-        self.window.scrollok(True)
+        self.term = blessings.Terminal()
+        self.term.enter_fullscreen()
+        self.term.stream.write(self.term.hide_cursor)
 
     def load(self):
         os.chdir(self.slides_directory)
@@ -75,13 +83,17 @@ class console(object):
             name, _ = os.path.splitext(slide)
             self.slides[name] = imp.load_source(name, slide_path)
 
+    def flash(self):
+        print('\a')
+        print(self.term.move(0,0))
+
     def next(self):
         new_slide = False
         if self.slide_index + 1 <= len(self.slides):
             self.slide_index += 1
             new_slide = True
         else:
-            curses.flash()
+            self.flash()
         return new_slide
 
     def back(self):
@@ -90,22 +102,20 @@ class console(object):
             self.slide_index -= 1
             new_slide = True
         else:
-            curses.flash()
+            self.flash()
         return new_slide
 
     def scrollup(self):
         if self.scroll_position > 1:
             self.scroll_position -= 1
-            self.window.scroll(-1)
         else:
-            curses.flash()
+            self.flash()
 
     def scrolldown(self, lines):
         if self.scroll_position + 1 < lines:
             self.scroll_position += 1
-            self.window.scroll(1)
         else:
-            curses.flash()
+            self.flash()
 
     def currentSlide(self):
         slide_name = 'slide'+str(self.slide_index)
@@ -114,35 +124,29 @@ class console(object):
     def run(self):
         new_slide = True
         should_run = True
-        y = 0
-        x = 0
         text_lines = 0
         while should_run:
             if new_slide:
-                self.window.erase()
+                print(self.term.clear())
                 current_slide = self.currentSlide()
-                y, cols = self.window.getmaxyx()
-                text_lines = linesInText(cols, current_slide.content())
-                text_lines = max(text_lines - y, text_lines)
-                lines = max(y, text_lines)
-                current_slide.draw(self.window)
+                text_lines = slide.NumTextLines(self.term, current_slide.content())
+                current_slide.draw(self.term)
                 new_slide = False
-            self.window.refresh()
-            key = self.window.getch()
+            key = self.input()
             for case in Switch(key):
-                if case(curses.KEY_LEFT):
+                if case('\x1b[D'):
                     new_slide = self.back()
                     break
-                if case(curses.KEY_RIGHT):
+                if case('\x1b[C'):
                     new_slide = self.next()
                     break
-                if case(curses.KEY_UP):
+                if case('\x1b[A'):
                     self.scrollup()
                     break
-                if case(curses.KEY_DOWN):
+                if case('\x1b[B'):
                     self.scrolldown(text_lines)
                     break
-                if case(113): # the letter Q
+                if case('qqq'): # the letter Q
                     should_run = False
                     break
                 if case():
@@ -150,7 +154,6 @@ class console(object):
         self.exit()
 
     def exit(self):
-        curses.nocbreak()
-        curses.echo()
-        self.window.keypad(0)
-        curses.endwin()
+        print(self.term.clear())
+        self.term.stream.write(self.term.normal_cursor)
+        self.term.exit_fullscreen()

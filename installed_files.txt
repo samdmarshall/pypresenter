@@ -2,6 +2,7 @@
 /Users/Samantha/Library/Python/2.7/lib/python/site-packages/pypresenter-0.1-py2.7.egg/EGG-INFO/entry_points.txt
 /Users/Samantha/Library/Python/2.7/lib/python/site-packages/pypresenter-0.1-py2.7.egg/EGG-INFO/not-zip-safe
 /Users/Samantha/Library/Python/2.7/lib/python/site-packages/pypresenter-0.1-py2.7.egg/EGG-INFO/PKG-INFO
+/Users/Samantha/Library/Python/2.7/lib/python/site-packages/pypresenter-0.1-py2.7.egg/EGG-INFO/requires.txt
 /Users/Samantha/Library/Python/2.7/lib/python/site-packages/pypresenter-0.1-py2.7.egg/EGG-INFO/SOURCES.txt
 /Users/Samantha/Library/Python/2.7/lib/python/site-packages/pypresenter-0.1-py2.7.egg/EGG-INFO/top_level.txt
 /Users/Samantha/Library/Python/2.7/lib/python/site-packages/pypresenter-0.1-py2.7.egg/pypresenter/__init__.py

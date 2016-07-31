@@ -28,9 +28,41 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 
-class slide(object):
+import blessings
 
+def NumLinesInText(columns, text):
+    number_of_newlines = text.count('\n')
+    number_of_wrapped_lines = (len(text) / columns) + 1
+    return number_of_newlines + number_of_wrapped_lines
+
+def NumTextLines(window, text):
+    y, cols = window._height_and_width()
+    text_lines = NumLinesInText(cols, text)
+    text_lines = max(text_lines - y, text_lines)
+    return text_lines
+
+def CenterText(window, text):
+    rows, cols = window._height_and_width()
+    # fix this :(
+    newlines = max(text.count('\n'), 1)
+    x = ((int(cols) / 2) - (len(text) / 2))
+    y = ((int(rows) / 2) - (newlines / 2))
+    with window.location(x,y):
+        print(text)
+
+class slide(object):
     def draw(self, window):
         raise Exception("Subclass this type to implement a slide")
     def content(self):
         raise Exception("Subclass this type to implement a slide")
+
+# ---
+
+    def numLinesInText(self, columns, text):
+        return NumLinesInText(columns, text)
+
+    def numTextLines(self, window, text):
+        return NumTextLines(window, text)
+
+    def centerText(self, window, text):
+        CenterText(window, text)

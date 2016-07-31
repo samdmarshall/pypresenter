@@ -45,4 +45,7 @@ setup(
         'console_scripts': [ 'pypresenter = pypresenter:main' ] 
     },
     zip_safe = False,
+    install_requires = [
+        'blessings'
+    ]
 )

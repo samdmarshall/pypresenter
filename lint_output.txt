@@ -1,8 +1,25 @@
+************* Module pypresenter
+W: 32, 0: Unused slide imported from slide (unused-import)
+************* Module pypresenter.console
+C:116, 8: Invalid variable name "y" (invalid-name)
+C:117, 8: Invalid variable name "x" (invalid-name)
+C:123,16: Invalid variable name "y" (invalid-name)
+W:117, 8: Unused variable 'x' (unused-variable)
+************* Module pypresenter.slide
+E: 33,19: Undefined variable 'string_value' (undefined-variable)
+E: 35,32: Undefined variable 'columns' (undefined-variable)
+E: 35,53: Undefined variable 'string_value' (undefined-variable)
+E: 35,74: Undefined variable 'string_value' (undefined-variable)
+W: 31,24: Unused argument 'text' (unused-argument)
+W: 32,10: Unused variable 'cols' (unused-variable)
+W: 38,19: Unused argument 'window' (unused-argument)
+R: 38, 4: Method could be a function (no-self-use)
+R: 40, 4: Method could be a function (no-self-use)
 
 
 Report
 ======
-19 statements analysed.
+153 statements analysed.
 
 Statistics by type
 ------------------
@@ -10,13 +27,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |4      |4          |=          |0.00        |0.00     |
+|module   |7      |7          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |0      |0          |=          |0           |0        |
+|class    |3      |3          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |0      |0          |=          |0           |0        |
+|method   |15     |15         |=          |26.67       |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |1      |1          |=          |0.00        |0.00     |
+|function |3      |3          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -26,6 +43,8 @@ External dependencies
 ::
 
     pypresenter 
+      \-Switch (pypresenter.console)
+      \-console (pypresenter.main)
       \-version (pypresenter.main)
 
 
@@ -36,13 +55,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |27     |21.26 |24       |+3.00      |
+|code      |169    |44.83 |171      |-2.00      |
 +----------+-------+------+---------+-----------+
-|docstring |2      |1.57  |2        |=          |
+|docstring |4      |1.06  |4        |=          |
 +----------+-------+------+---------+-----------+
-|comment   |88     |69.29 |88       |=          |
+|comment   |176    |46.68 |176      |=          |
 +----------+-------+------+---------+-----------+
-|empty     |10     |7.87  |9        |+1.00      |
+|empty     |28     |7.43  |28       |=          |
 +----------+-------+------+---------+-----------+
 
 
@@ -66,18 +85,54 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |0      |0        |=          |
+|convention |3      |3        |=          |
 +-----------+-------+---------+-----------+
-|refactor   |0      |0        |=          |
+|refactor   |2      |2        |=          |
 +-----------+-------+---------+-----------+
-|warning    |0      |0        |=          |
+|warning    |5      |7        |-2.00      |
 +-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
+|error      |4      |4        |=          |
 +-----------+-------+---------+-----------+
+
+
+
+% errors / warnings by module
+-----------------------------
+
++--------------------+-------+--------+---------+-----------+
+|module              |error  |warning |refactor |convention |
++====================+=======+========+=========+===========+
+|pypresenter.slide   |100.00 |60.00   |100.00   |0.00       |
++--------------------+-------+--------+---------+-----------+
+|pypresenter.console |0.00   |20.00   |0.00     |100.00     |
++--------------------+-------+--------+---------+-----------+
+|pypresenter         |0.00   |20.00   |0.00     |0.00       |
++--------------------+-------+--------+---------+-----------+
+
+
+
+Messages
+--------
+
++-------------------+------------+
+|message id         |occurrences |
++===================+============+
+|undefined-variable |4           |
++-------------------+------------+
+|invalid-name       |3           |
++-------------------+------------+
+|unused-variable    |2           |
++-------------------+------------+
+|unused-argument    |2           |
++-------------------+------------+
+|no-self-use        |2           |
++-------------------+------------+
+|unused-import      |1           |
++-------------------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
+Your code has been rated at 8.04/10 (previous run: 7.94/10, +0.10)
 
