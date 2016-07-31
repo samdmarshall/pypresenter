@@ -59,7 +59,8 @@ class console(object):
         self.input = _Getch()
         self.slides = dict()
         self.slide_index = 1
-        self.scroll_position = 1
+        self._cached_slide = None
+        self._cached_slide_name = None
         if os.path.exists(self.slides_directory):
             self.setup()
             self.load()
@@ -108,21 +109,18 @@ class console(object):
             self.flash()
         return new_slide
 
-    def scrollup(self):
-        if self.scroll_position > 1:
-            self.scroll_position -= 1
-        else:
-            self.flash()
+    def scrollUp(self):
+        self.currentSlide().scrollUp(self.term)
 
-    def scrolldown(self, lines):
-        if self.scroll_position + 1 < lines:
-            self.scroll_position += 1
-        else:
-            self.flash()
+    def scrollDown(self):
+        self.currentSlide().scrollDown(self.term)
 
     def currentSlide(self):
         slide_name = 'slide'+str(self.slide_index)
-        return getattr(self.slides[slide_name], slide_name)()
+        if self._cached_slide_name != slide_name:
+            self._cached_slide_name = slide_name
+            self._cached_slide = getattr(self.slides[slide_name], slide_name)()
+        return self._cached_slide
 
     def separator(self):
         separator_bar = '=' * (self.term.width - 2)
@@ -132,16 +130,15 @@ class console(object):
     def run(self):
         new_slide = True
         should_run = True
-        text_lines = 0
         while should_run:
             if new_slide:
+                new_slide = False
                 print(self.term.clear())
                 print(self.separator())
                 print(self.term.clear())
                 current_slide = self.currentSlide()
-                text_lines = slide.NumTextLines(self.term, current_slide.content())
+                self.term.move(0,0)
                 current_slide.draw(self.term)
-                new_slide = False
             key = self.input()
             for case in Switch(key):
                 if case('\x1b[D'):
@@ -151,10 +148,10 @@ class console(object):
                     new_slide = self.next()
                     break
                 if case('\x1b[A'):
-                    self.scrollup()
+                    self.scrollUp()
                     break
                 if case('\x1b[B'):
-                    self.scrolldown(text_lines)
+                    self.scrollDown()
                     break
                 if case('qqq'): # the letter Q
                     should_run = False
