@@ -36,18 +36,39 @@ def NumLinesInText(columns, text):
     return number_of_newlines + number_of_wrapped_lines
 
 def NumTextLines(window, text):
-    y, cols = window._height_and_width()
+    rows = window.height
+    cols = window.width
     text_lines = NumLinesInText(cols, text)
-    text_lines = max(text_lines - y, text_lines)
+    text_lines = max(text_lines - rows, text_lines)
     return text_lines
 
+def FormatText(text, rows, cols):
+    formatted_text = ''
+    start_index = 0
+    end_index = 0
+    is_iterating = True
+    while is_iterating:
+        remaining_length = len(text[start_index:])
+        if remaining_length < cols:
+            is_iterating = False
+        length = min(remaining_length, cols - 1) 
+        end_index = length + start_index
+        formatted_text += text[start_index:end_index]
+        if end_index < len(text):
+            formatted_text += '-'
+        start_index += length
+    return formatted_text
+
 def CenterText(window, text):
-    rows, cols = window._height_and_width()
+    rows = window.height
+    cols = window.width
+    text = FormatText(text, rows, cols)
     # fix this :(
-    newlines = max(text.count('\n'), 1)
-    x = ((int(cols) / 2) - (len(text) / 2))
+    newlines = text.count('\n')
+    text_length = min(len(text), cols)
+    x = ((int(cols) / 2) - (text_length / 2))
     y = ((int(rows) / 2) - (newlines / 2))
-    with window.location(x,y):
+    with window.location(x=x,y=y):
         print(text)
 
 class slide(object):

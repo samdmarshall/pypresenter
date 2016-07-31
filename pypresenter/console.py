@@ -121,12 +121,19 @@ class console(object):
         slide_name = 'slide'+str(self.slide_index)
         return getattr(self.slides[slide_name], slide_name)()
 
+    def separator(self):
+        separator_bar = '=' * (self.term.width - 2)
+        separator_string = '@'+separator_bar+'@'
+        return separator_string
+        
     def run(self):
         new_slide = True
         should_run = True
         text_lines = 0
         while should_run:
             if new_slide:
+                print(self.term.clear())
+                print(self.separator())
                 print(self.term.clear())
                 current_slide = self.currentSlide()
                 text_lines = slide.NumTextLines(self.term, current_slide.content())
