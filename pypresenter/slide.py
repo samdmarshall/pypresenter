@@ -28,39 +28,28 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import math
 import blessings
 
-def NumLinesInText(columns, text):
-    number_of_newlines = text.count('\n')
-    number_of_wrapped_lines = (len(text) / columns) + 1
-    return number_of_newlines + number_of_wrapped_lines
-
-def NumTextLines(window, text):
-    rows = window.height
-    cols = window.width
-    text_lines = NumLinesInText(cols, text)
-    text_lines = max(text_lines - rows, text_lines)
-    return text_lines
-
-def FormatText(text, rows, cols, add_hyphen):
+def FormatText(text, cols, add_hyphen):
+    column_width = cols - 1
     formatted_lines = list()
     for unformatted_line in text.split('\n'):
-        start_index = 0
-        end_index = 0
-        formatted_text = ''
-        is_iterating = True
-        while is_iterating:
-            remaining_length = len(unformatted_line[start_index:])
-            if remaining_length < cols:
-                is_iterating = False
-            length = min(remaining_length, cols - 1)
-            end_index = length + start_index
-            formatted_text += unformatted_line[start_index:end_index]
-            start_index += length
-            if end_index < len(unformatted_line) and add_hyphen:
-                formatted_text += '-'
-        formatted_lines.append(formatted_text)
+        line_length = len(unformatted_line)
+        if line_length > column_width:
+            split_line = list()
+            start_index = 0
+            end_index = cols
+            while start_index < line_length:
+                end_index = min(column_width, (line_length - start_index))
+                end_index += start_index
+                string_value = unformatted_line[start_index:end_index]
+                if end_index < line_length and add_hyphen:
+                    string_value += '-'
+                split_line.append(string_value)
+                start_index = end_index
+            formatted_lines.extend(split_line)
+        else:
+            formatted_lines.append(unformatted_line)
     return formatted_lines
 
 def center_x(dimension, content):
@@ -73,47 +62,37 @@ def left_x(dimension, content):
     return 0
 
 def left_y(dimension, content, offset):
-    return 0 + offset
+    return offset
 
-def DisplayText(window, line, newline_count, line_index, func_x, func_y):
+def DisplayText(window, line, line_index, total_line_count, func_x, func_y):
     rows = window.height
     cols = window.width
-    text_length = min(len(line), cols)
-    x = func_x(cols, text_length)
-    y = func_y(rows, newline_count, line_index)
-    printed_lints = int(math.ceil(len(line)/cols))
+    row_offset = min(total_line_count, rows)
+    column_offset = min(len(line), cols)
+    x = func_x(cols, len(line))
+    y = func_y(rows, row_offset, line_index)
     with window.location(x=x,y=y):
         print(line)
-        print('\n'*printed_lints)
-    return printed_lints
 
 def LeftText(window, text, scroll_offset):
     rows = window.height
     cols = window.width
-    text_lines = FormatText(text, rows, cols, False)
-    newlines = len(text_lines)
+    text_lines = FormatText(text, cols, False)
     line_index = 0
-    for line in text_lines[scroll_offset:]:
-        run_over = 1
-        if line_index < rows - 2:
-            run_over += DisplayText(window, line, newlines, line_index, left_x, left_y)
-        else:
-            break
-        line_index += run_over
+    index_offset = scroll_offset
+    while line_index < (rows - 2) and line_index+index_offset < len(text_lines):
+        DisplayText(window, text_lines[line_index+index_offset], line_index, len(text_lines), left_x, left_y)
+        line_index += 1
 
 def CenterText(window, text, scroll_offset):
     rows = window.height
     cols = window.width
-    text_lines = FormatText(text, rows, cols, True)
-    newlines = len(text_lines)
+    text_lines = FormatText(text, cols, True)
     line_index = 0
-    for line in text_lines[scroll_offset:]:
-        run_over = 1
-        if line_index < newlines:
-            run_over += DisplayText(window, line, newlines, line_index, center_x, center_y)
-        else:
-            break
-        line_index += run_over
+    index_offset = scroll_offset
+    while line_index < (rows - 2) and line_index < len(text_lines):
+        DisplayText(window, text_lines[line_index+index_offset], line_index, len(text_lines), center_x, center_y)
+        line_index += 1
 
 kDrawingMethods = {
     'center': CenterText,
@@ -141,12 +120,6 @@ class slide(object):
         print(window.clear())
         self.drawMethod(window, text, self.scroll_position)
         print(window.refresh())
-
-    def numLinesInText(self, columns, text):
-        return NumLinesInText(columns, text)
-
-    def numTextLines(self, window, text):
-        return NumTextLines(window, text)
 
     def scrollUp(self, window):
         text = self.content(window)
