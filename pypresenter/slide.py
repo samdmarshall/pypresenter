@@ -28,6 +28,7 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import math
 import blessings
 
 def NumLinesInText(columns, text):
@@ -53,7 +54,7 @@ def FormatText(text, rows, cols, add_hyphen):
             remaining_length = len(unformatted_line[start_index:])
             if remaining_length < cols:
                 is_iterating = False
-            length = min(remaining_length, cols-1)
+            length = min(remaining_length, cols - 1)
             end_index = length + start_index
             formatted_text += unformatted_line[start_index:end_index]
             start_index += length
@@ -80,10 +81,11 @@ def DisplayText(window, line, newline_count, line_index, func_x, func_y):
     text_length = min(len(line), cols)
     x = func_x(cols, text_length)
     y = func_y(rows, newline_count, line_index)
+    printed_lints = int(math.ceil(len(line)/cols))
     with window.location(x=x,y=y):
         print(line)
-        print('\n'*(len(line)/cols))
-    return int(len(line)/cols) + 1
+        print('\n'*printed_lints)
+    return printed_lints
 
 def LeftText(window, text, scroll_offset):
     rows = window.height
@@ -93,8 +95,10 @@ def LeftText(window, text, scroll_offset):
     line_index = 0
     for line in text_lines[scroll_offset:]:
         run_over = 1
-        if line_index < rows - 1:
-            run_over = DisplayText(window, line, newlines, line_index, left_x, left_y)
+        if line_index < rows - 2:
+            run_over += DisplayText(window, line, newlines, line_index, left_x, left_y)
+        else:
+            break
         line_index += run_over
 
 def CenterText(window, text, scroll_offset):
@@ -106,7 +110,9 @@ def CenterText(window, text, scroll_offset):
     for line in text_lines[scroll_offset:]:
         run_over = 1
         if line_index < newlines:
-            run_over = DisplayText(window, line, newlines, line_index, center_x, center_y)
+            run_over += DisplayText(window, line, newlines, line_index, center_x, center_y)
+        else:
+            break
         line_index += run_over
 
 kDrawingMethods = {
@@ -145,19 +151,14 @@ class slide(object):
     def scrollUp(self, window):
         text = self.content(window)
         line_count = len(text.split('\n'))
-        if line_count > window.height - 1:
+        if line_count >= window.height - 2:
             if self.scroll_position > 0:
                 self.scroll_position = self.scroll_position - 1
                 self.displayText(window, text)
-            else:
-                window.flash()
 
     def scrollDown(self, window):
         text = self.content(window)
         line_count = len(text.split('\n'))
-        if line_count - self.scroll_position > window.height - 1:
-            if self.scroll_position + 1 < line_count:
-                self.scroll_position = self.scroll_position + 1
-                self.displayText(window, text)
-            else:
-                window.flash()
+        if line_count >= window.height - 2:
+            self.scroll_position = self.scroll_position + 1
+            self.displayText(window, text)
