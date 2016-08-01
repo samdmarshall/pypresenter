@@ -93,7 +93,7 @@ def LeftText(window, text, scroll_offset):
     line_index = 0
     for line in text_lines[scroll_offset:]:
         run_over = 1
-        if line_index < rows -1:
+        if line_index < rows - 1:
             run_over = DisplayText(window, line, newlines, line_index, left_x, left_y)
         line_index += run_over
 
@@ -144,8 +144,8 @@ class slide(object):
 
     def scrollUp(self, window):
         text = self.content(window)
-        lines = len(text.split('\n'))
-        if lines > window.height - 1:
+        line_count = len(text.split('\n'))
+        if line_count > window.height - 1:
             if self.scroll_position > 0:
                 self.scroll_position = self.scroll_position - 1
                 self.displayText(window, text)
@@ -154,9 +154,9 @@ class slide(object):
 
     def scrollDown(self, window):
         text = self.content(window)
-        lines = len(text.split('\n'))
-        if lines - self.scroll_position > window.height - 1:
-            if self.scroll_position + 1 < lines:
+        line_count = len(text.split('\n'))
+        if line_count - self.scroll_position > window.height - 1:
+            if self.scroll_position + 1 < line_count:
                 self.scroll_position = self.scroll_position + 1
                 self.displayText(window, text)
             else:

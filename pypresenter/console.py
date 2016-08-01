@@ -76,11 +76,7 @@ class console(object):
     def load(self):
         working_dir = os.getcwd()
         os.chdir(self.slides_directory)
-        slide_files = list()
-        for fileref in os.listdir(self.slides_directory):
-            name, extension = os.path.splitext(fileref)
-            if name != '__init__' and extension == '.py':
-                slide_files.append(fileref)
+        slide_files = [fileref for fileref in os.listdir(self.slides_directory) if os.path.splitext(fileref)[1] == '.py']
         for slide in slide_files:
             slide_path = os.path.join(self.slides_directory, slide)
             name, _ = os.path.splitext(slide)
