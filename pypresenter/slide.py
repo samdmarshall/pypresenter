@@ -64,7 +64,7 @@ def left_x(dimension, content):
 def left_y(dimension, content, offset):
     return offset
 
-def DisplayText(window, line, line_index, total_line_count, func_x, func_y):
+def DisplayText(window, line, line_index, total_line_count, func_x, func_y, character_index, formatting):
     rows = window.height
     cols = window.width
     row_offset = min(total_line_count, rows)
@@ -72,26 +72,36 @@ def DisplayText(window, line, line_index, total_line_count, func_x, func_y):
     x = func_x(cols, len(line))
     y = func_y(rows, row_offset, line_index)
     with window.location(x=x,y=y):
-        print(line)
+        line_text = ''
+        for letter in line:
+            formatting_values = formatting.get(str(character_index), [])
+            for format_value in formatting_values:
+                line_text += getattr(window, format_value)
+            line_text += letter
+            character_index += 1
+        print(line_text)
+    return character_index
 
-def LeftText(window, text, scroll_offset):
+def LeftText(window, text, scroll_offset, formatting):
     rows = window.height
     cols = window.width
     text_lines = FormatText(text, cols, False)
     line_index = 0
     index_offset = scroll_offset
+    character_index = sum([len(line) for line in text_lines[:line_index+index_offset]])
     while line_index < (rows - 2) and line_index+index_offset < len(text_lines):
-        DisplayText(window, text_lines[line_index+index_offset], line_index, len(text_lines), left_x, left_y)
+        character_index = DisplayText(window, text_lines[line_index+index_offset], line_index, len(text_lines), left_x, left_y, character_index, formatting)
         line_index += 1
 
-def CenterText(window, text, scroll_offset):
+def CenterText(window, text, scroll_offset, formatting):
     rows = window.height
     cols = window.width
     text_lines = FormatText(text, cols, True)
     line_index = 0
     index_offset = scroll_offset
+    character_index = sum([len(line) for line in text_lines[:line_index+index_offset]])
     while line_index < (rows - 2) and line_index < len(text_lines):
-        DisplayText(window, text_lines[line_index+index_offset], line_index, len(text_lines), center_x, center_y)
+        character_index = DisplayText(window, text_lines[line_index+index_offset], line_index, len(text_lines), center_x, center_y, character_index, formatting)
         line_index += 1
 
 kDrawingMethods = {
@@ -104,9 +114,11 @@ class slide(object):
         self.scroll_position = 0
         self.drawMethod = kDrawingMethods[draw_method]
     def draw(self, window):
-        raise Exception("Subclass this type to implement a slide")
+        raise Exception("Subclass this type to implement a slide rendering")
     def content(self):
-        raise Exception("Subclass this type to implement a slide")
+        raise Exception("Subclass this type to implement a slide content")
+    def formatting(self):
+        return {}
     @property
     def scroll_position(self):
         return self._scroll_position
@@ -118,7 +130,7 @@ class slide(object):
 
     def displayText(self, window, text):
         print(window.clear())
-        self.drawMethod(window, text, self.scroll_position)
+        self.drawMethod(window, text, self.scroll_position, self.formatting())
         print(window.refresh())
 
     def scrollUp(self, window):
